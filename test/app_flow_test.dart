@@ -1,10 +1,13 @@
 import 'package:bahja_app/app/app.dart';
 import 'package:bahja_app/app/providers.dart';
+import 'package:bahja_app/app/outbox.dart';
+import 'package:bahja_app/core/outbox/outbox_store.dart';
 import 'package:bahja_app/core/storage/session_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'support/fake_api.dart';
 
@@ -102,11 +105,8 @@ void main() {
         ..on('GET', '/v1/classrooms', body: '{"data": []}')
         ..on('GET', '/v1/moments', body: fixture('ward_wall.json'))
         ..on('GET', '/v1/me/notifications', body: fixture('notifications.json'))
-        ..on(
-          'POST',
-          '/v1/attendance/check-in',
-          body: '{"data": {"id": 9, "child_id": 5, "date": "2026-10-04", "checked_in_at": "2026-10-04T09:30:00+00:00"}}',
-        );
+        ..on('POST', '/v1/attendance/check-in/bulk', body: '{"data": []}');
+      SharedPreferences.setMockInitialValues({});
       final session = MemorySessionStore(token: '6|teacher', tenantId: 1);
 
       await tester.pumpWidget(
@@ -114,6 +114,7 @@ void main() {
           overrides: [
             sessionStoreProvider.overrideWithValue(session),
             apiClientProvider.overrideWithValue(fakeClient(adapter, session)),
+            outboxStoreProvider.overrideWithValue(MemoryOutboxStore()),
           ],
           child: const BahgaApp(),
         ),
@@ -125,14 +126,21 @@ void main() {
       await tester.tap(find.widgetWithText(FilledButton, 'تسجيل حضور').first);
       await tester.pumpAndSettle();
 
+      // Sent in the background through the outbox, with the time of the tap.
       final checkIn = adapter.requests
-          .where((r) => r.path == '/v1/attendance/check-in')
+          .where((r) => r.path == '/v1/attendance/check-in/bulk')
           .single;
-      expect(checkIn.data, {'child_id': 5, 'method': 'manual'});
+      final children = (checkIn.data as Map)['children'] as List;
+      expect((children.single as Map)['child_id'], 5);
+      final tappedAt = DateTime.parse(
+        (children.single as Map)['checked_in_at'] as String,
+      );
+      expect(tappedAt.difference(DateTime.now()).inMinutes.abs(), lessThan(2));
+      // The sheet reloads once the server confirmed.
       expect(
         adapter.requests.where((r) => r.path == '/v1/attendance'),
         hasLength(2),
-      ); // sheet reloaded
+      );
     },
   );
 }

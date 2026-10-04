@@ -51,6 +51,24 @@ class StaffRepository {
             as Json,
       );
 
+  /// Many children at once, with the time each was really scanned (offline sync).
+  Future<void> bulkCheckIn(
+    List<({int childId, DateTime at})> entries, {
+    String method = 'manual',
+  }) => _api.post(
+    '/v1/attendance/check-in/bulk',
+    data: {
+      'method': method,
+      'children': [
+        for (final e in entries)
+          {
+            'child_id': e.childId,
+            'checked_in_at': e.at.toUtc().toIso8601String(),
+          },
+      ],
+    },
+  );
+
   /// Exactly one way of identifying the collector.
   Future<Attendance> checkOut(
     int childId, {

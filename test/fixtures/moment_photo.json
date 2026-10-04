@@ -27,6 +27,7 @@
                 "expires_at": "2026-10-04T10:00:00+00:00"
             }
         ],
+        "videos": [],
         "requires_ack": false,
         "published_at": "2026-10-04T09:30:00+00:00"
     }

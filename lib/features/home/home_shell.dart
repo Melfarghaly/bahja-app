@@ -7,7 +7,8 @@ import '../../l10n/strings.dart';
 import '../billing/invoices_screen.dart';
 import '../guardian/wards_screen.dart';
 import '../notifications/inbox_screen.dart';
-import '../staff/attendance_screen.dart';
+import '../staff/today_screen.dart';
+import 'sync_indicator.dart';
 import '../wall/staff_wall_screen.dart';
 
 class _Tab {
@@ -41,7 +42,11 @@ class _HomeShellState extends ConsumerState<HomeShell> {
       if (can.guardian)
         _Tab(s.myChildren, Icons.child_care_rounded, const WardsScreen()),
       if (can.takeAttendance)
-        _Tab(s.attendance, Icons.fact_check_outlined, const AttendanceScreen()),
+        _Tab(
+          s.isArabic ? 'اليوم' : 'Today',
+          Icons.today_rounded,
+          const TodayScreen(),
+        ),
       if (can.dailyWall && can.isStaff)
         _Tab(s.wall, Icons.photo_library_outlined, const StaffWallScreen()),
       _Tab(
@@ -61,6 +66,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
           style: const TextStyle(fontWeight: FontWeight.w800),
         ),
         actions: [
+          if (can.isStaff) const SyncIndicator(),
           IconButton(
             icon: const Icon(Icons.account_circle_outlined),
             tooltip: s.account,

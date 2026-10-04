@@ -1,4 +1,6 @@
+import 'package:cross_file/cross_file.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 import '../core/models/json.dart';
 import '../core/models/moment.dart';
@@ -9,12 +11,14 @@ import '../core/network/api_client.dart';
 class NewMoment {
   const NewMoment({
     required this.type,
+    this.clientRef,
     this.body,
     this.payload = const {},
     this.childIds = const [],
     this.classroomId,
     this.exceptChildIds = const [],
     this.photoPaths = const [],
+    this.videos = const [],
   });
 
   final String type;
@@ -24,6 +28,20 @@ class NewMoment {
   final int? classroomId;
   final List<int> exceptChildIds;
   final List<String> photoPaths;
+  final List<NewVideo> videos;
+
+  /// The app's id for this update: a retry never posts it twice.
+  final String? clientRef;
+
+  bool get hasMedia => photoPaths.isNotEmpty || videos.isNotEmpty;
+}
+
+class NewVideo {
+  const NewVideo({required this.path, this.posterPath, this.durationMs});
+
+  final String path;
+  final String? posterPath;
+  final int? durationMs;
 }
 
 class WallRepository {
@@ -57,9 +75,13 @@ class WallRepository {
     Moment.fromJson,
   );
 
-  Future<Moment> post(NewMoment moment) async {
+  Future<Moment> post(
+    NewMoment moment, {
+    void Function(int sent, int total)? onProgress,
+  }) async {
     final fields = <String, dynamic>{
       'type': moment.type,
+      'client_ref': ?moment.clientRef,
       if (moment.body != null && moment.body!.trim().isNotEmpty)
         'body': moment.body!.trim(),
       if (moment.payload.isNotEmpty) 'payload': moment.payload,
@@ -71,13 +93,14 @@ class WallRepository {
         'except_child_ids': moment.exceptChildIds,
     };
 
-    if (moment.photoPaths.isEmpty) {
+    if (!moment.hasMedia) {
       return Moment.fromJson(
         (await _api.post('/v1/moments', data: fields))['data'] as Json,
       );
     }
 
-    // Photos go as multipart form-data (`child_ids[]`, `payload[meal]`, `photos[]`).
+    // Media goes as multipart form-data (`child_ids[]`, `payload[meal]`,
+    // `photos[]`, `videos[]` with `video_posters[]` / `video_durations[]`).
     final form = FormData();
     fields.forEach((key, value) {
       if (value is List) {
@@ -91,17 +114,43 @@ class WallRepository {
       }
     });
     for (final path in moment.photoPaths) {
-      form.files.add(
-        MapEntry(
-          'photos[]',
-          await MultipartFile.fromFile(path, filename: path.split('/').last),
-        ),
-      );
+      form.files.add(MapEntry('photos[]', await _file(path)));
+    }
+    for (final video in moment.videos) {
+      form.files.add(MapEntry('videos[]', await _file(video.path)));
+      if (video.posterPath != null) {
+        form.files.add(
+          MapEntry(
+            'video_posters[]',
+            await _file(video.posterPath!, 'poster.jpg'),
+          ),
+        );
+      }
+      if (video.durationMs != null) {
+        form.fields.add(MapEntry('video_durations[]', '${video.durationMs}'));
+      }
     }
 
     return Moment.fromJson(
-      (await _api.post('/v1/moments', data: form))['data'] as Json,
+      (await _api.post(
+            '/v1/moments',
+            data: form,
+            onSendProgress: onProgress,
+          ))['data']
+          as Json,
     );
+  }
+
+  /// Streams from disk on phones; reads the picked blob on the web.
+  Future<MultipartFile> _file(String path, [String? name]) async {
+    final filename = name ?? path.split('/').last;
+    if (kIsWeb) {
+      return MultipartFile.fromBytes(
+        await XFile(path).readAsBytes(),
+        filename: filename,
+      );
+    }
+    return MultipartFile.fromFile(path, filename: filename);
   }
 
   Future<void> delete(int momentId) => _api.delete('/v1/moments/$momentId');

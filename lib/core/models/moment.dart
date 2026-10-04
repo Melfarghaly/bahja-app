@@ -13,7 +13,7 @@ class MomentPhoto {
   factory MomentPhoto.fromJson(Json json) => MomentPhoto(
     id: asInt(json['id'])!,
     url: json['url'] as String,
-    thumbUrl: json['thumb_url'] as String,
+    thumbUrl: json['thumb_url'] as String?,
     width: asInt(json['width']),
     height: asInt(json['height']),
     expiresAt: parseDate(json['expires_at']),
@@ -23,7 +23,7 @@ class MomentPhoto {
 
   /// Signed, expiring links: use directly, no auth header.
   final String url;
-  final String thumbUrl;
+  final String? thumbUrl;
   final int? width;
   final int? height;
   final DateTime? expiresAt;
@@ -31,6 +31,47 @@ class MomentPhoto {
   double get aspectRatio => (width != null && height != null && height! > 0)
       ? width! / height!
       : 4 / 3;
+}
+
+/// A short video: streamable (HTTP Range) from a signed, expiring link.
+class MomentVideo {
+  const MomentVideo({
+    required this.id,
+    required this.url,
+    this.posterUrl,
+    this.width,
+    this.height,
+    this.durationMs,
+    this.size,
+  });
+
+  factory MomentVideo.fromJson(Json json) => MomentVideo(
+    id: asInt(json['id'])!,
+    url: json['url'] as String,
+    posterUrl: json['poster_url'] as String?,
+    width: asInt(json['width']),
+    height: asInt(json['height']),
+    durationMs: asInt(json['duration_ms']),
+    size: asInt(json['size']),
+  );
+
+  final int id;
+  final String url;
+  final String? posterUrl;
+  final int? width;
+  final int? height;
+  final int? durationMs;
+  final int? size;
+
+  double get aspectRatio => (width != null && height != null && height! > 0)
+      ? width! / height!
+      : 16 / 9;
+
+  /// "0:42"
+  String get durationLabel {
+    final seconds = ((durationMs ?? 0) / 1000).round();
+    return '${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}';
+  }
 }
 
 class MomentChild {
@@ -63,6 +104,7 @@ class Moment {
     this.classroomName,
     this.children = const [],
     this.photos = const [],
+    this.videos = const [],
     this.requiresAck = false,
     required this.publishedAt,
   });
@@ -77,6 +119,7 @@ class Moment {
     classroomName: (json['classroom'] as Json?)?['name'] as String?,
     children: asList(json['children'], MomentChild.fromJson),
     photos: asList(json['photos'], MomentPhoto.fromJson),
+    videos: asList(json['videos'], MomentVideo.fromJson),
     requiresAck: asBool(json['requires_ack']),
     publishedAt: parseDate(json['published_at']) ?? DateTime.now(),
   );
@@ -92,6 +135,7 @@ class Moment {
   final String? classroomName;
   final List<MomentChild> children;
   final List<MomentPhoto> photos;
+  final List<MomentVideo> videos;
   final bool requiresAck;
   final DateTime publishedAt;
 

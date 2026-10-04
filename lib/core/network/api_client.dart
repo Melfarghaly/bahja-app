@@ -59,8 +59,18 @@ class ApiClient {
     ),
   );
 
-  Future<Json> post(String path, {Object? data, bool tenant = true}) => _send(
-    () => dio.post<dynamic>(path, data: data, options: _options(tenant)),
+  Future<Json> post(
+    String path, {
+    Object? data,
+    bool tenant = true,
+    ProgressCallback? onSendProgress,
+  }) => _send(
+    () => dio.post<dynamic>(
+      path,
+      data: data,
+      options: _options(tenant),
+      onSendProgress: onSendProgress,
+    ),
   );
 
   Future<Json> put(String path, {Object? data}) =>

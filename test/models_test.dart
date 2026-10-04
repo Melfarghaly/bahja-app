@@ -98,6 +98,15 @@ void main() {
     );
   });
 
+  test('a video with its poster and duration', () {
+    final moment = Moment.fromJson(data('moment_video.json'));
+    final video = moment.videos.single;
+    expect(moment.photos, isEmpty);
+    expect(video.url, contains('signature='));
+    expect(video.posterUrl, contains('/thumb?'));
+    expect(video.durationLabel, '0:03');
+  });
+
   test('invoices, payment methods and subscription', () {
     final invoice = Invoice.fromJson(data('invoice.json'));
     expect(invoice.balance.piasters, 351500);

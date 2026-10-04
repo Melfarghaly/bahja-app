@@ -22,6 +22,7 @@ const _requests = {
   'My notifications (inbox)': 'notifications.json',
   'Guardian — photo consent for my child': 'photo_consent.json',
   'Teacher — post photos (multipart)': 'moment_photo.json',
+  'Teacher — post a short video (multipart)': 'moment_video.json',
   "Guardian — my child's wall": 'ward_wall.json',
   'My invoice': 'invoice.json',
   'My invoices': 'invoices.json',

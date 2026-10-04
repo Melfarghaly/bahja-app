@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../core/media/media_image.dart';
 import '../../core/models/moment.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/formatters.dart';
 import '../../l10n/strings.dart';
+import 'media_viewer.dart';
 
 IconData momentIcon(String type) => switch (type) {
   'photo' => Icons.photo_camera_outlined,
+  'video' => Icons.videocam_outlined,
   'meal' => Icons.restaurant_rounded,
   'nap' => Icons.bedtime_outlined,
   'diaper' => Icons.baby_changing_station_outlined,
@@ -80,7 +83,8 @@ class MomentCard extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
               child: Text(moment.body!, style: const TextStyle(height: 1.6)),
             ),
-          if (moment.photos.isNotEmpty) _Photos(photos: moment.photos),
+          if (moment.photos.isNotEmpty || moment.videos.isNotEmpty)
+            _MediaStrip(items: mediaOf(moment)),
           if (showChildren && moment.children.isNotEmpty)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
@@ -128,73 +132,101 @@ class MomentCard extends StatelessWidget {
   }
 }
 
-class _Photos extends StatelessWidget {
-  const _Photos({required this.photos});
+/// Photos and videos of a moment. One item fills the width at its real
+/// aspect ratio (no layout jump while loading); several scroll sideways as
+/// thumbnails. Videos show their poster: no player is created in the feed.
+class _MediaStrip extends StatelessWidget {
+  const _MediaStrip({required this.items});
 
-  final List<MomentPhoto> photos;
+  final List<MediaItem> items;
 
   @override
   Widget build(BuildContext context) {
-    if (photos.length == 1) {
+    if (items.length == 1) {
+      final item = items.single;
+      final ratio = switch (item) {
+        PhotoItem(:final photo) => photo.aspectRatio,
+        VideoItem(:final video) => video.aspectRatio,
+      };
       return GestureDetector(
-        onTap: () => _open(context, photos.first),
+        onTap: () => MediaViewer.open(context, items, 0),
         child: AspectRatio(
-          aspectRatio: photos.first.aspectRatio.clamp(0.75, 1.8),
-          child: _image(photos.first.url),
+          aspectRatio: ratio.clamp(0.75, 1.8),
+          child: _Thumb(item: item, large: true),
         ),
       );
     }
+
     return SizedBox(
       height: 180,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: photos.length,
+        itemCount: items.length,
         separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (context, i) => GestureDetector(
-          onTap: () => _open(context, photos[i]),
+          onTap: () => MediaViewer.open(context, items, i),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: SizedBox.square(
               dimension: 180,
-              child: _image(photos[i].thumbUrl),
+              child: _Thumb(item: items[i]),
             ),
           ),
         ),
       ),
     );
   }
+}
 
-  void _open(BuildContext context, MomentPhoto photo) =>
-      Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (_) => Scaffold(
-            backgroundColor: Colors.black,
-            appBar: AppBar(
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
-            ),
-            body: Center(
-              child: InteractiveViewer(
-                child: _image(photo.url, fit: BoxFit.contain),
+class _Thumb extends StatelessWidget {
+  const _Thumb({required this.item, this.large = false});
+
+  final MediaItem item;
+  final bool large;
+
+  @override
+  Widget build(BuildContext context) => Hero(
+    tag: item.heroTag,
+    child: switch (item) {
+      // A single photo shows the full image; a strip only needs thumbnails.
+      PhotoItem(:final photo) => MediaImage(
+        url: large || photo.thumbUrl == null ? photo.url : photo.thumbUrl!,
+        cacheKey: large || photo.thumbUrl == null
+            ? 'moment-photo-${photo.id}-full'
+            : 'moment-photo-${photo.id}-thumb',
+      ),
+      VideoItem(:final video) => Stack(
+        fit: StackFit.expand,
+        children: [
+          if (video.posterUrl != null)
+            MediaImage(
+              url: video.posterUrl!,
+              cacheKey: 'moment-video-${video.id}-poster',
+            )
+          else
+            Container(color: Colors.black87),
+          const Center(
+            child: Icon(Icons.play_circle_fill, color: Colors.white, size: 56),
+          ),
+          if (video.durationMs != null)
+            PositionedDirectional(
+              end: 8,
+              bottom: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  video.durationLabel,
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                ),
               ),
             ),
-          ),
-        ),
-      );
-
-  /// Links expire after 30 minutes: a failed load shows a placeholder
-  /// (pull to refresh fetches fresh links).
-  Widget _image(String url, {BoxFit fit = BoxFit.cover}) => Image.network(
-    url,
-    fit: fit,
-    errorBuilder: (_, _, _) => Container(
-      color: const Color(0xFFF0EEE9),
-      alignment: Alignment.center,
-      child: const Icon(
-        Icons.image_not_supported_outlined,
-        color: Colors.black26,
+        ],
       ),
-    ),
+    },
   );
 }

@@ -1,0 +1,36 @@
+{
+    "data": {
+        "id": 2,
+        "type": "video",
+        "summary": "فيديو جديد",
+        "body": "أول خطوات في الرقص",
+        "payload": {},
+        "author": {
+            "id": 2,
+            "name": "مس هالة"
+        },
+        "classroom": null,
+        "children": [
+            {
+                "id": 1,
+                "first_name": "يوسف",
+                "acknowledged_at": null
+            }
+        ],
+        "photos": [],
+        "videos": [
+            {
+                "id": 2,
+                "width": 512,
+                "height": 512,
+                "duration_ms": 3000,
+                "size": 2204,
+                "url": "http://localhost/media/1/2/full?expires=1791108000&signature=60343daf8f523e6a5bfbd195744e13a054e417ec02cbc3a90d62de9e84db1e32",
+                "poster_url": "http://localhost/media/1/2/thumb?expires=1791108000&signature=a134e9cea06591499fe75a791b91e3f33a93bf3ae08dc33491fba3c235ff1c61",
+                "expires_at": "2026-10-04T10:00:00+00:00"
+            }
+        ],
+        "requires_ack": false,
+        "published_at": "2026-10-04T09:30:00+00:00"
+    }
+}

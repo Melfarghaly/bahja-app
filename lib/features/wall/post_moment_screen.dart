@@ -1,11 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../app/outbox.dart';
 import '../../app/providers.dart';
 import '../../core/models/child.dart';
-import '../../core/network/api_exception.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/wall_repository.dart';
 import '../../l10n/strings.dart';
@@ -53,13 +56,15 @@ class _PostMomentScreenState extends ConsumerState<PostMomentScreen> {
   TimeOfDay _napFrom = const TimeOfDay(hour: 12, minute: 30);
   TimeOfDay _napTo = const TimeOfDay(hour: 14, minute: 0);
   final List<XFile> _photos = [];
+  final List<XFile> _videos = [];
+  String? _localProblem;
   bool _busy = false;
-  ApiException? _error;
 
   String _label(String type) {
     final ar = S.of(context).isArabic;
     return switch (type) {
       'photo' => ar ? 'صور' : 'Photos',
+      'video' => ar ? 'فيديو' : 'Video',
       'meal' => ar ? 'وجبة' : 'Meal',
       'nap' => ar ? 'نوم' : 'Nap',
       'diaper' => ar ? 'حفاض' : 'Diaper',
@@ -83,30 +88,87 @@ class _PostMomentScreenState extends ConsumerState<PostMomentScreen> {
     _ => const {},
   };
 
-  Future<void> _submit() async {
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
-    try {
-      await ref
-          .read(wallRepositoryProvider)
-          .post(
-            NewMoment(
-              type: _type,
-              body: _body.text,
-              payload: _payloadFor(_type),
-              classroomId: _wholeClass ? _classroomId : null,
-              childIds: _wholeClass ? const [] : _selected.toList(),
-              photoPaths: _photos.map((p) => p.path).toList(),
-            ),
-          );
-      if (mounted) context.pop(true);
-    } on ApiException catch (e) {
-      setState(() => _error = e);
-    } finally {
-      if (mounted) setState(() => _busy = false);
+  /// Checked here so the teacher sees problems now, not after the upload:
+  /// required fields, and photo consent for everyone in a photo or video.
+  String? _localError(bool ar) {
+    if (['note', 'health', 'incident'].contains(_type) &&
+        _body.text.trim().isEmpty) {
+      return ar ? 'اكتبي النص أولاً' : 'Write the text first';
     }
+    if (_type == 'activity' && _title.text.trim().isEmpty) {
+      return ar ? 'اكتبي عنوان النشاط' : 'Add the activity title';
+    }
+    if (_type == 'photo' && _photos.isEmpty) {
+      return ar ? 'أضيفي صورة واحدة على الأقل' : 'Add at least one photo';
+    }
+    if (_type == 'video' && _videos.isEmpty) {
+      return ar ? 'أضيفي فيديو' : 'Add a video';
+    }
+    if (!_wholeClass && _selected.isEmpty) {
+      return ar ? 'اختاري الأطفال' : 'Choose the children';
+    }
+
+    if (_photos.isNotEmpty || _videos.isNotEmpty) {
+      final id = _classroomId;
+      final children = id == null
+          ? null
+          : ref.read(_classroomChildrenProvider(id)).value;
+      if (children != null) {
+        final tagged = _wholeClass
+            ? children
+            : children.where((c) => _selected.contains(c.id)).toList();
+        final group = tagged.length > 1;
+        final missing = tagged
+            .where(
+              (c) =>
+                  c.photoConsentWall == false ||
+                  (group && c.photoConsentGroup == false),
+            )
+            .map((c) => c.firstName)
+            .toList();
+        if (missing.isNotEmpty) {
+          final names = missing.join('، ');
+          return group
+              ? (ar
+                    ? 'لا يوجد إذن بالظهور في الصور الجماعية لـ: $names'
+                    : 'No group-photo permission for: $names')
+              : (ar
+                    ? 'لا يوجد إذن تصوير لـ: $names'
+                    : 'No photo permission for: $names');
+        }
+      }
+    }
+    return null;
+  }
+
+  /// Saved on the phone and sent in the background: the screen closes at once.
+  Future<void> _submit() async {
+    final s = S.of(context);
+    final problem = _localError(s.isArabic);
+    if (problem != null) {
+      setState(() => _localProblem = problem);
+      return;
+    }
+
+    setState(() => _busy = true);
+    final count = _wholeClass ? null : _selected.length;
+    await ref
+        .read(outboxProvider.notifier)
+        .addMoment(
+          NewMoment(
+            type: _type,
+            body: _body.text,
+            payload: _payloadFor(_type),
+            classroomId: _wholeClass ? _classroomId : null,
+            childIds: _wholeClass ? const [] : _selected.toList(),
+            photoPaths: _photos.map((p) => p.path).toList(),
+            videos: _videos.map((v) => NewVideo(path: v.path)).toList(),
+          ),
+          label:
+              '${_label(_type)} · ${count == null ? s.wholeClass : '$count ${s.isArabic ? 'طفل' : 'children'}'}',
+        );
+    unawaited(HapticFeedback.mediumImpact());
+    if (mounted) context.pop(true);
   }
 
   @override
@@ -163,31 +225,24 @@ class _PostMomentScreenState extends ConsumerState<PostMomentScreen> {
                 : (v) => setState(() => _wholeClass = v),
           ),
           if (!_wholeClass || _type == 'incident') _childPicker(),
-          if (_error?.fieldError('child_ids') != null ||
-              _error?.fieldError('classroom_id') != null)
-            Text(
-              _error!.fieldError('child_ids') ??
-                  _error!.fieldError('classroom_id')!,
-              style: const TextStyle(color: AppColors.danger),
-            ),
           const SizedBox(height: 12),
           ..._typeFields(ar),
           const SizedBox(height: 12),
           TextField(
             controller: _body,
             maxLines: 4,
-            decoration: InputDecoration(
-              labelText: ar ? 'النص' : 'Text',
-              errorText: _error?.fieldError('body'),
-            ),
+            decoration: InputDecoration(labelText: ar ? 'النص' : 'Text'),
           ),
           const SizedBox(height: 12),
           _photoPicker(s),
-          if (_error != null && _error!.fieldErrors.isEmpty) ...[
+          if (_localProblem != null) ...[
             const SizedBox(height: 8),
             Text(
-              _error!.message,
-              style: const TextStyle(color: AppColors.danger),
+              _localProblem!,
+              style: const TextStyle(
+                color: AppColors.danger,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
           const SizedBox(height: 20),
@@ -318,7 +373,6 @@ class _PostMomentScreenState extends ConsumerState<PostMomentScreen> {
           controller: _title,
           decoration: InputDecoration(
             labelText: ar ? 'عنوان النشاط' : 'Activity',
-            errorText: _error?.fieldError('payload.title'),
           ),
         ),
       ],
@@ -336,38 +390,88 @@ class _PostMomentScreenState extends ConsumerState<PostMomentScreen> {
     }
   }
 
-  Widget _photoPicker(S s) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: [
-          for (final photo in _photos)
-            InputChip(
-              label: Text(photo.name, overflow: TextOverflow.ellipsis),
-              onDeleted: () => setState(() => _photos.remove(photo)),
-            ),
-          ActionChip(
-            avatar: const Icon(Icons.add_photo_alternate_outlined),
-            label: Text(s.addPhotos),
-            onPressed: () async {
-              // Compressed on the device before upload (the server re-encodes anyway).
-              final picked = await ImagePicker().pickMultiImage(
-                maxWidth: 2048,
-                imageQuality: 85,
-                limit: 10,
-              );
-              setState(() => _photos.addAll(picked.take(10 - _photos.length)));
-            },
-          ),
-        ],
-      ),
-      if (_error?.fieldError('photos') != null)
-        Text(
-          _error!.fieldError('photos')!,
-          style: const TextStyle(color: AppColors.danger),
+  Widget _photoPicker(S s) {
+    final ar = s.isArabic;
+    final picker = ImagePicker();
+
+    Future<void> addPhotos(ImageSource source) async {
+      // Resized and compressed on the phone: a 12 MP photo uploads as ~300 KB.
+      final picked = source == ImageSource.camera
+          ? [
+              ?await picker.pickImage(
+                source: source,
+                maxWidth: 1600,
+                imageQuality: 80,
+              ),
+            ]
+          : await picker.pickMultiImage(
+              maxWidth: 1600,
+              imageQuality: 80,
+              limit: 10,
+            );
+      setState(() => _photos.addAll(picked.take(10 - _photos.length)));
+    }
+
+    Future<void> addVideo(ImageSource source) async {
+      // Short clips only; compressed to 720p in the background before upload.
+      final video = await picker.pickVideo(
+        source: source,
+        maxDuration: const Duration(seconds: 60),
+      );
+      if (video != null && _videos.length < 3) {
+        setState(() => _videos.add(video));
+      }
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final photo in _photos)
+              InputChip(
+                avatar: const Icon(Icons.photo_outlined, size: 18),
+                label: Text(photo.name, overflow: TextOverflow.ellipsis),
+                onDeleted: () => setState(() => _photos.remove(photo)),
+              ),
+            for (final video in _videos)
+              InputChip(
+                avatar: const Icon(Icons.videocam_outlined, size: 18),
+                label: Text(video.name, overflow: TextOverflow.ellipsis),
+                onDeleted: () => setState(() => _videos.remove(video)),
+              ),
+          ],
         ),
-    ],
-  );
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ActionChip(
+              avatar: const Icon(Icons.photo_camera_outlined),
+              label: Text(ar ? 'صورة' : 'Photo'),
+              onPressed: () => addPhotos(ImageSource.camera),
+            ),
+            ActionChip(
+              avatar: const Icon(Icons.add_photo_alternate_outlined),
+              label: Text(s.addPhotos),
+              onPressed: () => addPhotos(ImageSource.gallery),
+            ),
+            ActionChip(
+              avatar: const Icon(Icons.videocam_outlined),
+              label: Text(ar ? 'تصوير فيديو' : 'Record video'),
+              onPressed: () => addVideo(ImageSource.camera),
+            ),
+            ActionChip(
+              avatar: const Icon(Icons.video_library_outlined),
+              label: Text(ar ? 'فيديو من المعرض' : 'Video from gallery'),
+              onPressed: () => addVideo(ImageSource.gallery),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 }

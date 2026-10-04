@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/outbox.dart';
 import '../../app/providers.dart';
 import '../../core/models/moment.dart';
 import '../../l10n/strings.dart';
@@ -23,6 +24,11 @@ class _StaffWallScreenState extends ConsumerState<StaffWallScreen> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final repo = ref.read(wallRepositoryProvider);
+    // An update reached the server: show it in the feed.
+    ref.listen(
+      outboxProvider.select((o) => o.delivered),
+      (_, _) => _list.currentState?.reload(),
+    );
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(

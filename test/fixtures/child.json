@@ -1,0 +1,63 @@
+{
+    "data": {
+        "id": 1,
+        "first_name": "يوسف",
+        "last_name": "محمود",
+        "birth_date": "2022-03-14",
+        "gender": "male",
+        "status": "active",
+        "medical_notes": {
+            "allergies": [
+                "فول سوداني"
+            ]
+        },
+        "classroom": {
+            "id": 1,
+            "name": "عباد الشمس",
+            "capacity": 20
+        },
+        "guardians": [
+            {
+                "id": 3,
+                "name": "منى عبد الله",
+                "phone": "01000000002",
+                "relationship": "mother",
+                "role": "primary",
+                "can_view_wall": true,
+                "can_pickup": true,
+                "is_payer": true,
+                "custody_flag": "none",
+                "billing_share_bp": null
+            },
+            {
+                "id": 4,
+                "name": "عم سيد السائق",
+                "phone": "01000000003",
+                "relationship": "driver",
+                "role": "pickup_authorized",
+                "can_view_wall": false,
+                "can_pickup": true,
+                "is_payer": false,
+                "custody_flag": "none",
+                "billing_share_bp": null
+            },
+            {
+                "id": 5,
+                "name": "أحمد محمود",
+                "phone": "01000000005",
+                "relationship": "father",
+                "role": "viewer",
+                "can_view_wall": true,
+                "can_pickup": false,
+                "is_payer": false,
+                "custody_flag": "blocked",
+                "billing_share_bp": null
+            }
+        ],
+        "photo_consent": {
+            "wall": false,
+            "group_photos": false
+        },
+        "today_attendance": null
+    }
+}

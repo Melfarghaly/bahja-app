@@ -1,0 +1,15 @@
+{
+    "data": [
+        {
+            "gateway": "paymob",
+            "label": "بطاقة أو محفظة إلكترونية",
+            "kind": "redirect"
+        },
+        {
+            "gateway": "fawry",
+            "label": "فوري (كود دفع)",
+            "kind": "payment_code"
+        }
+    ],
+    "online_payments_enabled": true
+}

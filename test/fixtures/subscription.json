@@ -1,0 +1,43 @@
+{
+    "data": {
+        "id": 1,
+        "status": "active",
+        "trial_ends_at": null,
+        "current_period_end": "2026-11-04T09:30:00+00:00",
+        "plan": {
+            "id": 3,
+            "name": "Pro",
+            "slug": "pro",
+            "price_egp": 1900,
+            "max_children": 120
+        }
+    },
+    "entitlements": {
+        "plan_name": "Pro",
+        "features": [
+            "attendance",
+            "lost_child",
+            "wall",
+            "thank_you_stars",
+            "finance_ledger",
+            "pickup_passes",
+            "messaging",
+            "health_records",
+            "auto_collection",
+            "admissions_crm",
+            "pulse_report",
+            "reports_export",
+            "rewards_catalog"
+        ],
+        "limits": {
+            "children": {
+                "limit": 120,
+                "used": 4
+            },
+            "staff": {
+                "limit": null,
+                "used": 1
+            }
+        }
+    }
+}

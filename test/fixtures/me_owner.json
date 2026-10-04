@@ -1,0 +1,31 @@
+{
+    "data": {
+        "id": 1,
+        "name": "سامية المديرة",
+        "phone": "01000000001",
+        "email": "owner@bahga.test",
+        "locale": "ar",
+        "nurseries": [
+            {
+                "id": 1,
+                "name": "حضانة البراعم",
+                "phone": "0223456789",
+                "logo_url": null,
+                "roles": [
+                    "owner"
+                ],
+                "capabilities": {
+                    "manage_nursery": true,
+                    "take_attendance": true,
+                    "view_children": true,
+                    "manage_children": true,
+                    "guardian": false,
+                    "bahga_pay": true,
+                    "online_payments": true,
+                    "safe_pickup": true,
+                    "daily_wall": true
+                }
+            }
+        ]
+    }
+}

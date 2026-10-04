@@ -1,0 +1,33 @@
+{
+    "data": {
+        "id": 1,
+        "type": "photo",
+        "summary": "صور جديدة",
+        "body": "يوم الرسم بالألوان المائية",
+        "payload": {},
+        "author": {
+            "id": 2,
+            "name": "مس هالة"
+        },
+        "classroom": null,
+        "children": [
+            {
+                "id": 1,
+                "first_name": "يوسف",
+                "acknowledged_at": null
+            }
+        ],
+        "photos": [
+            {
+                "id": 1,
+                "width": 512,
+                "height": 512,
+                "url": "http://localhost/media/1/1/full?expires=1791108000&signature=61fc81317b86e7a1bee8f093c3fdd462138f629fd52a92510dee8c12637b8cef",
+                "thumb_url": "http://localhost/media/1/1/thumb?expires=1791108000&signature=95aa78606cfb0043954a508444759211fe9cc20a09ca19d83649249b66b1158d",
+                "expires_at": "2026-10-04T10:00:00+00:00"
+            }
+        ],
+        "requires_ack": false,
+        "published_at": "2026-10-04T09:30:00+00:00"
+    }
+}

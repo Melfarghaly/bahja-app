@@ -1,0 +1,44 @@
+{
+    "data": {
+        "collector": {
+            "method": "dynamic_qr",
+            "user_id": 3,
+            "pickup_pass_id": null,
+            "name": "منى عبد الله",
+            "phone": "01000000002",
+            "pass_valid_until": null
+        },
+        "children": [
+            {
+                "child": {
+                    "id": 2,
+                    "first_name": "ليلى",
+                    "last_name": "محمود",
+                    "classroom": {
+                        "id": 1,
+                        "name": "عباد الشمس"
+                    }
+                },
+                "attendance_status": "present",
+                "allowed": true,
+                "reason": null,
+                "reason_label": null
+            },
+            {
+                "child": {
+                    "id": 1,
+                    "first_name": "يوسف",
+                    "last_name": "محمود",
+                    "classroom": {
+                        "id": 1,
+                        "name": "عباد الشمس"
+                    }
+                },
+                "attendance_status": "picked_up",
+                "allowed": true,
+                "reason": null,
+                "reason_label": null
+            }
+        ]
+    }
+}

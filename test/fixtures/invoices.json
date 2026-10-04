@@ -1,0 +1,47 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "number": "INV-2026-000001",
+            "period": "2026-10",
+            "issued_on": "2026-10-04",
+            "due_on": "2026-10-05",
+            "status": "open",
+            "status_label": "مستحقة",
+            "is_overdue": false,
+            "days_overdue": 0,
+            "subtotal": {
+                "piasters": 370000,
+                "formatted": "3,700 ج.م"
+            },
+            "discount": {
+                "piasters": 18500,
+                "formatted": "185 ج.م"
+            },
+            "total": {
+                "piasters": 351500,
+                "formatted": "3,515 ج.م"
+            },
+            "paid": {
+                "piasters": 0,
+                "formatted": "0 ج.م"
+            },
+            "balance": {
+                "piasters": 351500,
+                "formatted": "3,515 ج.م"
+            }
+        }
+    ],
+    "links": {
+        "first": null,
+        "last": null,
+        "prev": null,
+        "next": null
+    },
+    "meta": {
+        "path": "http://localhost/api/v1/me/invoices",
+        "per_page": 12,
+        "next_cursor": null,
+        "prev_cursor": null
+    }
+}

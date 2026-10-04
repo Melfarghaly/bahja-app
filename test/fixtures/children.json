@@ -1,0 +1,158 @@
+{
+    "data": [
+        {
+            "id": 2,
+            "first_name": "ليلى",
+            "last_name": "محمود",
+            "birth_date": "2023-06-02",
+            "gender": "female",
+            "status": "active",
+            "medical_notes": null,
+            "classroom": {
+                "id": 1,
+                "name": "عباد الشمس",
+                "capacity": 20
+            },
+            "guardians": [
+                {
+                    "id": 3,
+                    "name": "منى عبد الله",
+                    "phone": "01000000002",
+                    "relationship": "mother",
+                    "role": "primary",
+                    "can_view_wall": true,
+                    "can_pickup": true,
+                    "is_payer": true,
+                    "custody_flag": "none",
+                    "billing_share_bp": null
+                },
+                {
+                    "id": 4,
+                    "name": "عم سيد السائق",
+                    "phone": "01000000003",
+                    "relationship": "driver",
+                    "role": "pickup_authorized",
+                    "can_view_wall": false,
+                    "can_pickup": true,
+                    "is_payer": false,
+                    "custody_flag": "none",
+                    "billing_share_bp": null
+                }
+            ],
+            "photo_consent": {
+                "wall": false,
+                "group_photos": false
+            },
+            "today_attendance": {
+                "id": 1,
+                "child_id": 2,
+                "date": "2026-10-04",
+                "checked_in_at": "2026-10-04T09:30:00+00:00",
+                "check_in_method": "qr",
+                "checked_out_at": null,
+                "picked_up_by": null,
+                "picked_up_by_name": null,
+                "pickup_verified": false,
+                "pickup_method": null,
+                "pickup_pass_id": null,
+                "override_reason": null
+            }
+        },
+        {
+            "id": 1,
+            "first_name": "يوسف",
+            "last_name": "محمود",
+            "birth_date": "2022-03-14",
+            "gender": "male",
+            "status": "active",
+            "medical_notes": {
+                "allergies": [
+                    "فول سوداني"
+                ]
+            },
+            "classroom": {
+                "id": 1,
+                "name": "عباد الشمس",
+                "capacity": 20
+            },
+            "guardians": [
+                {
+                    "id": 3,
+                    "name": "منى عبد الله",
+                    "phone": "01000000002",
+                    "relationship": "mother",
+                    "role": "primary",
+                    "can_view_wall": true,
+                    "can_pickup": true,
+                    "is_payer": true,
+                    "custody_flag": "none",
+                    "billing_share_bp": null
+                },
+                {
+                    "id": 4,
+                    "name": "عم سيد السائق",
+                    "phone": "01000000003",
+                    "relationship": "driver",
+                    "role": "pickup_authorized",
+                    "can_view_wall": false,
+                    "can_pickup": true,
+                    "is_payer": false,
+                    "custody_flag": "none",
+                    "billing_share_bp": null
+                },
+                {
+                    "id": 5,
+                    "name": "أحمد محمود",
+                    "phone": "01000000005",
+                    "relationship": "father",
+                    "role": "viewer",
+                    "can_view_wall": true,
+                    "can_pickup": false,
+                    "is_payer": false,
+                    "custody_flag": "blocked",
+                    "billing_share_bp": null
+                }
+            ],
+            "photo_consent": {
+                "wall": false,
+                "group_photos": false
+            },
+            "today_attendance": null
+        }
+    ],
+    "links": {
+        "first": "http://localhost/api/v1/children?classroom_id=1&per_page=20&page=1",
+        "last": "http://localhost/api/v1/children?classroom_id=1&per_page=20&page=1",
+        "prev": null,
+        "next": null
+    },
+    "meta": {
+        "current_page": 1,
+        "from": 1,
+        "last_page": 1,
+        "links": [
+            {
+                "url": null,
+                "label": "&laquo; السابق",
+                "page": null,
+                "active": false
+            },
+            {
+                "url": "http://localhost/api/v1/children?classroom_id=1&per_page=20&page=1",
+                "label": "1",
+                "page": 1,
+                "active": true
+            },
+            {
+                "url": null,
+                "label": "التالي &raquo;",
+                "page": null,
+                "active": false
+            }
+        ],
+        "path": "http://localhost/api/v1/children",
+        "per_page": 20,
+        "to": 2,
+        "total": 2
+    }
+}

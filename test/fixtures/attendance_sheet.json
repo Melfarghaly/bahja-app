@@ -1,0 +1,68 @@
+{
+    "data": [
+        {
+            "child": {
+                "id": 5,
+                "first_name": "آدم",
+                "last_name": "سامي",
+                "classroom": {
+                    "id": 1,
+                    "name": "عباد الشمس"
+                }
+            },
+            "status": "absent",
+            "late_pickup": false,
+            "attendance": null
+        },
+        {
+            "child": {
+                "id": 2,
+                "first_name": "ليلى",
+                "last_name": "محمود",
+                "classroom": {
+                    "id": 1,
+                    "name": "عباد الشمس"
+                }
+            },
+            "status": "present",
+            "late_pickup": false,
+            "attendance": {
+                "id": 1,
+                "child_id": 2,
+                "date": "2026-10-04",
+                "checked_in_at": "2026-10-04T09:30:00+00:00",
+                "check_in_method": "qr",
+                "checked_out_at": null,
+                "picked_up_by": null,
+                "picked_up_by_name": null,
+                "pickup_verified": false,
+                "pickup_method": null,
+                "pickup_pass_id": null,
+                "override_reason": null
+            }
+        },
+        {
+            "child": {
+                "id": 1,
+                "first_name": "يوسف",
+                "last_name": "محمود",
+                "classroom": {
+                    "id": 1,
+                    "name": "عباد الشمس"
+                }
+            },
+            "status": "absent",
+            "late_pickup": false,
+            "attendance": null
+        }
+    ],
+    "date": "2026-10-04",
+    "pickup_deadline": "16:00",
+    "summary": {
+        "total": 3,
+        "present": 1,
+        "picked_up": 0,
+        "absent": 2,
+        "late_pickup": 0
+    }
+}

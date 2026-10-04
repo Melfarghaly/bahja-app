@@ -1,0 +1,138 @@
+{
+    "data": [
+        {
+            "id": 4,
+            "type": "incident",
+            "summary": "حادثة بسيطة تحتاج إقرارك",
+            "body": "تعثّر في الحديقة وخدش ركبته خدشاً بسيطاً، تم تطهيره ووضع لاصق.",
+            "payload": {},
+            "author": {
+                "id": 2,
+                "name": "مس هالة"
+            },
+            "children": [
+                {
+                    "id": 1,
+                    "first_name": "يوسف",
+                    "acknowledged_at": null
+                }
+            ],
+            "photos": [],
+            "requires_ack": true,
+            "published_at": "2026-10-04T09:30:00+00:00"
+        },
+        {
+            "id": 3,
+            "type": "nap",
+            "summary": "نام من 12:30 إلى 14:00",
+            "body": null,
+            "payload": {
+                "from": "12:30",
+                "to": "14:00"
+            },
+            "author": {
+                "id": 2,
+                "name": "مس هالة"
+            },
+            "children": [
+                {
+                    "id": 1,
+                    "first_name": "يوسف",
+                    "acknowledged_at": null
+                }
+            ],
+            "photos": [],
+            "requires_ack": false,
+            "published_at": "2026-10-04T09:30:00+00:00"
+        },
+        {
+            "id": 2,
+            "type": "meal",
+            "summary": "وجبة الغداء: أكل نصفه",
+            "body": null,
+            "payload": {
+                "meal": "lunch",
+                "amount": "half"
+            },
+            "author": {
+                "id": 2,
+                "name": "مس هالة"
+            },
+            "children": [
+                {
+                    "id": 1,
+                    "first_name": "يوسف",
+                    "acknowledged_at": null
+                }
+            ],
+            "photos": [],
+            "requires_ack": false,
+            "published_at": "2026-10-04T09:30:00+00:00"
+        },
+        {
+            "id": 1,
+            "type": "photo",
+            "summary": "صور جديدة",
+            "body": "يوم الرسم بالألوان المائية",
+            "payload": {},
+            "author": {
+                "id": 2,
+                "name": "مس هالة"
+            },
+            "children": [
+                {
+                    "id": 1,
+                    "first_name": "يوسف",
+                    "acknowledged_at": null
+                }
+            ],
+            "photos": [
+                {
+                    "id": 1,
+                    "width": 512,
+                    "height": 512,
+                    "url": "http://localhost/media/1/1/full?expires=1791108000&signature=61fc81317b86e7a1bee8f093c3fdd462138f629fd52a92510dee8c12637b8cef",
+                    "thumb_url": "http://localhost/media/1/1/thumb?expires=1791108000&signature=95aa78606cfb0043954a508444759211fe9cc20a09ca19d83649249b66b1158d",
+                    "expires_at": "2026-10-04T10:00:00+00:00"
+                }
+            ],
+            "requires_ack": false,
+            "published_at": "2026-10-04T09:30:00+00:00"
+        }
+    ],
+    "links": {
+        "first": "http://localhost/api/v1/me/wards/1/moments?page=1",
+        "last": "http://localhost/api/v1/me/wards/1/moments?page=1",
+        "prev": null,
+        "next": null
+    },
+    "meta": {
+        "current_page": 1,
+        "from": 1,
+        "last_page": 1,
+        "links": [
+            {
+                "url": null,
+                "label": "&laquo; السابق",
+                "page": null,
+                "active": false
+            },
+            {
+                "url": "http://localhost/api/v1/me/wards/1/moments?page=1",
+                "label": "1",
+                "page": 1,
+                "active": true
+            },
+            {
+                "url": null,
+                "label": "التالي &raquo;",
+                "page": null,
+                "active": false
+            }
+        ],
+        "path": "http://localhost/api/v1/me/wards/1/moments",
+        "per_page": 20,
+        "to": 4,
+        "total": 4
+    }
+}

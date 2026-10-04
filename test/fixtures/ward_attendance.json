@@ -1,0 +1,53 @@
+{
+    "data": [
+        {
+            "id": 2,
+            "child_id": 1,
+            "date": "2026-10-04",
+            "checked_in_at": "2026-10-04T09:25:00+00:00",
+            "check_in_method": "qr",
+            "checked_out_at": "2026-10-04T09:30:00+00:00",
+            "picked_up_by": null,
+            "picked_up_by_name": null,
+            "pickup_verified": false,
+            "pickup_method": "manual_override",
+            "pickup_pass_id": null,
+            "override_reason": "خالة الطفل: الأم في المستشفى واتصلت بالإدارة"
+        }
+    ],
+    "links": {
+        "first": "http://localhost/api/v1/me/wards/1/attendance?page=1",
+        "last": "http://localhost/api/v1/me/wards/1/attendance?page=1",
+        "prev": null,
+        "next": null
+    },
+    "meta": {
+        "current_page": 1,
+        "from": 1,
+        "last_page": 1,
+        "links": [
+            {
+                "url": null,
+                "label": "&laquo; السابق",
+                "page": null,
+                "active": false
+            },
+            {
+                "url": "http://localhost/api/v1/me/wards/1/attendance?page=1",
+                "label": "1",
+                "page": 1,
+                "active": true
+            },
+            {
+                "url": null,
+                "label": "التالي &raquo;",
+                "page": null,
+                "active": false
+            }
+        ],
+        "path": "http://localhost/api/v1/me/wards/1/attendance",
+        "per_page": 30,
+        "to": 1,
+        "total": 1
+    }
+}

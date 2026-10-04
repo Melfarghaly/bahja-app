@@ -1,0 +1,87 @@
+{
+    "data": [
+        {
+            "id": 2,
+            "first_name": "ليلى",
+            "last_name": "محمود",
+            "birth_date": "2023-06-02",
+            "gender": "female",
+            "status": "active",
+            "classroom": {
+                "id": 1,
+                "name": "عباد الشمس"
+            },
+            "medical_notes": null,
+            "my_link": {
+                "relationship": "mother",
+                "role": "primary",
+                "can_view_wall": true,
+                "can_pickup": true,
+                "is_payer": true,
+                "billing_share_bp": null,
+                "notifications": {
+                    "push": true,
+                    "sms": true
+                }
+            },
+            "today_attendance": {
+                "id": 1,
+                "child_id": 2,
+                "date": "2026-10-04",
+                "checked_in_at": "2026-10-04T09:30:00+00:00",
+                "check_in_method": "qr",
+                "checked_out_at": "2026-10-04T09:30:00+00:00",
+                "picked_up_by": null,
+                "picked_up_by_name": null,
+                "pickup_verified": true,
+                "pickup_method": "pass_code",
+                "pickup_pass_id": 1,
+                "override_reason": null
+            }
+        },
+        {
+            "id": 1,
+            "first_name": "يوسف",
+            "last_name": "محمود",
+            "birth_date": "2022-03-14",
+            "gender": "male",
+            "status": "active",
+            "classroom": {
+                "id": 1,
+                "name": "عباد الشمس"
+            },
+            "medical_notes": {
+                "allergies": [
+                    "فول سوداني",
+                    "بيض"
+                ]
+            },
+            "my_link": {
+                "relationship": "mother",
+                "role": "primary",
+                "can_view_wall": true,
+                "can_pickup": true,
+                "is_payer": true,
+                "billing_share_bp": null,
+                "notifications": {
+                    "push": true,
+                    "sms": true
+                }
+            },
+            "today_attendance": {
+                "id": 2,
+                "child_id": 1,
+                "date": "2026-10-04",
+                "checked_in_at": "2026-10-04T09:25:00+00:00",
+                "check_in_method": "qr",
+                "checked_out_at": "2026-10-04T09:30:00+00:00",
+                "picked_up_by": null,
+                "picked_up_by_name": null,
+                "pickup_verified": false,
+                "pickup_method": "manual_override",
+                "pickup_pass_id": null,
+                "override_reason": "خالة الطفل: الأم في المستشفى واتصلت بالإدارة"
+            }
+        }
+    ]
+}

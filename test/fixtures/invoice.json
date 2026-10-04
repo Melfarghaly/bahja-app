@@ -1,0 +1,63 @@
+{
+    "data": {
+        "id": 1,
+        "number": "INV-2026-000001",
+        "period": "2026-10",
+        "issued_on": "2026-10-04",
+        "due_on": "2026-10-05",
+        "status": "open",
+        "status_label": "مستحقة",
+        "is_overdue": false,
+        "days_overdue": 0,
+        "subtotal": {
+            "piasters": 370000,
+            "formatted": "3,700 ج.م"
+        },
+        "discount": {
+            "piasters": 18500,
+            "formatted": "185 ج.م"
+        },
+        "total": {
+            "piasters": 351500,
+            "formatted": "3,515 ج.م"
+        },
+        "paid": {
+            "piasters": 0,
+            "formatted": "0 ج.م"
+        },
+        "balance": {
+            "piasters": 351500,
+            "formatted": "3,515 ج.م"
+        },
+        "items": [
+            {
+                "description": "المصروفات الشهرية — يوسف",
+                "kind": "fee",
+                "child_id": 1,
+                "amount": {
+                    "piasters": 185000,
+                    "formatted": "1,850 ج.م"
+                }
+            },
+            {
+                "description": "المصروفات الشهرية — ليلى",
+                "kind": "fee",
+                "child_id": 2,
+                "amount": {
+                    "piasters": 185000,
+                    "formatted": "1,850 ج.م"
+                }
+            },
+            {
+                "description": "خصم الإخوة — ليلى",
+                "kind": "discount",
+                "child_id": 2,
+                "amount": {
+                    "piasters": -18500,
+                    "formatted": "-185 ج.م"
+                }
+            }
+        ],
+        "receipts": []
+    }
+}

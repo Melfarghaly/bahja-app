@@ -1,0 +1,8 @@
+{
+    "message": "تم بلوغ الحد الأقصى (4) لـ«الأطفال» في خطتك الحالية. يرجى الترقية.",
+    "code": "plan_limit_reached",
+    "errors": {
+        "resource": "children",
+        "limit": 4
+    }
+}

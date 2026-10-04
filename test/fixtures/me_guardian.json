@@ -1,0 +1,31 @@
+{
+    "data": {
+        "id": 3,
+        "name": "منى عبد الله",
+        "phone": "01000000002",
+        "email": "mona@example.com",
+        "locale": "ar",
+        "nurseries": [
+            {
+                "id": 1,
+                "name": "حضانة البراعم",
+                "phone": "0223456789",
+                "logo_url": null,
+                "roles": [
+                    "guardian"
+                ],
+                "capabilities": {
+                    "manage_nursery": false,
+                    "take_attendance": false,
+                    "view_children": false,
+                    "manage_children": false,
+                    "guardian": true,
+                    "bahga_pay": true,
+                    "online_payments": true,
+                    "safe_pickup": true,
+                    "daily_wall": true
+                }
+            }
+        ]
+    }
+}
